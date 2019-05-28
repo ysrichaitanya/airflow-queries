@@ -1,4 +1,7 @@
-SELECT
+select id, xx.level, case WHEN xx.score1 is null then 0 else xx.score1 end as recon
+from ingestiondb.hotels hh 
+left join
+(SELECT
   hotel_id, level,
   case WHEN level >=4 then 1
   ELSE 0 end as score1
@@ -21,4 +24,5 @@ when least(-1 * curr_recovery / 50000, 1) is null then 10
   else ((CASE WHEN curr_gmv > 0
     THEN least(-4 * curr_recovery / curr_gmv, 1)
     ELSE 1 END) * least(-1 * curr_recovery / 50000, 1) * least(curr_age / 3, 1)) * 10 end AS score
-from coinguard_service.hotel_financials WHERE month=extract(month from current_date) and year=extract(year from current_date))) order by hotel_id asc
+from coinguard_service.hotel_financials WHERE month=extract(month from current_date) and year=extract(year from current_date)))) xx
+  on xx.hotel_id = hh.id order by hh.id asc
