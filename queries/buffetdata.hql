@@ -18,4 +18,4 @@
     where answer is not null
     ) as temp1
       where temp1.question = 'Ala carte/ Buffet with 3 hot dishes') xx
-      on xx.hotel_id = cast(hh.id as VARCHAR(10000))
+      on xx.hotel_id = cast(hh.id as VARCHAR(10000)) order by id asc
