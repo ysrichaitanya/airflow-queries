@@ -18,4 +18,4 @@ select id, question, answer, score,
     where answer is not null
     ) as temp1
       where temp1.question = 'Power backup is available as:' ) xx
-      on xx.hotel_id = cast(hh.id as VARCHAR(1000)) limit 10
+      on xx.hotel_id = cast(hh.id as VARCHAR(1000)) order by id asc
