@@ -24,3 +24,4 @@ WHERE b.status in (1,2)
 and h.country_id = 1
 and date(b.checkin) between date(current_date - interval '30' day) and date(current_date - interval '1'day)
 GROUP BY h.oyo_id) a2 on a1.oyo_id=a2.oyo_id
+order by a1.hotel_id
