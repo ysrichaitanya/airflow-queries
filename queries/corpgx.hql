@@ -17,5 +17,6 @@ where date(b.checkout) between date(current_date-interval '30' day) and date(cur
 AND b.status in (2) and b.source not in (4) and (b.company_id is not null or b.source in(53))
 and f.source not in (1) and f.suggest_oyo >=1
 group by h.hotel_id
+order by h.hotel_id
 ) as t
 ) as temp
