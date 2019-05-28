@@ -3,8 +3,8 @@ select id,
     else 0 end as res
     from ingestiondb.hotels hh
     left join
-    (select temp1.*,case temp1.answer when'Yes' then 5
-    when 'Available free of Charge' then 5
+    (select temp1.*,case temp1.answer when'Yes' then 1
+    when 'Available free of Charge' then 1
     else 0 end as score from
     (
     select entityid as hotel_id,case when questionid like '%Room%' then element_at(split (questionid,'_'),-3) else element_at(split (questionid,'_'),-2) end as room,
