@@ -1,4 +1,7 @@
-select temp.*,case when temp.res < -50 then -50  when temp.res>30 then 30 else temp.res end as result from (
+select hh.id, CASE WHEN xx.result is null then 0 else xx.result end as corpgx
+from ingestiondb.hotels hh 
+left join
+(select temp.*,case when temp.res < -50 then -50  when temp.res>30 then 30 else temp.res end as result from (
 select t.*,((t.unhappy/(t.total_feedbacks*1.0000))*100) as UH_perc,
 case when ((t.unhappy/(t.total_feedbacks*1.0000))*100) > 10.00 then LEAST( t.total_feedbacks/3 ,30 ) else LEAST( t.total_feedbacks ,30 ) end as B ,
 (1- (ROUND ( ((GREATEST((((t.unhappy/(t.total_feedbacks*1.0000))*100) - 5),0))/5), 2) )) as A,
@@ -19,4 +22,5 @@ and f.source not in (1) and f.suggest_oyo >=1
 group by h.hotel_id
 order by h.hotel_id
 ) as t
-) as temp
+) as temp) xx
+  on xx.hotel_id = hh.id order by hh.id asc
