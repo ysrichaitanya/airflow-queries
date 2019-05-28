@@ -1,0 +1,123 @@
+from __future__ import print_function
+from airflow import DAG
+from datetime import datetime
+from airflow.operators.dummy_operator import DummyOperator
+from airflow.operators.python_operator import PythonOperator
+from pyhive import presto
+from kafka import KafkaProducer
+
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+
+producer = KafkaProducer(bootstrap_servers=['localhost:9092'], api_version=(0, 10, 1), acks='all', request_timeout_ms=10000)
+
+
+conn = presto.Connection(host="presto.oyorooms.io", port=8889)
+
+dag = DAG('hive_test', description='Hive to kafka events',
+          schedule_interval='0 12 * * *',
+          start_date=datetime(2017, 3, 20), catchup=False)
+
+
+def get_hive_data_city(**kwargs):
+    query = """
+    SELECT h.oyo_id,h.name,h.city,h.city_id,c.city_type, case c.city_type
+    when 0 then 0
+    else 1
+    end
+    as score
+    FROM "ingestiondb"."hotels" h inner join "ingestiondb"."cities" c
+    on h.city_id=c.id 
+    """
+    cursor = conn.cursor()
+    cursor.execute(query)
+    data = cursor.fetchall()
+    return data
+
+
+def create_json_city(data):
+    json_schema = {
+        '_id': data[0],
+        'hotel id': data[0],
+        'score_by_city': data[5]
+    }
+    return json_schema
+
+
+def kafka_event_city(**kwargs):
+    ti = kwargs['ti']
+    data_city = ti.xcom_pull(task_ids='get_hive_data_city')
+    for d in data_city:
+        x = create_json_city(d)
+        producer.send('tagging_score', x).close(10000)
+        print(x)
+
+
+hive_task_city = PythonOperator(
+    task_id='get_hive_data_city',
+    python_callable=get_hive_data_city,
+    provide_context=True,
+    dag=dag
+)
+
+kafka_task_city = PythonOperator(
+    task_id='kafka_event_city',
+    python_callable=kafka_event_city,
+    provide_context=True,
+    dag=dag
+)
+
+
+def get_hive_data_competition(**kwargs):
+    query = """
+    SELECT h.id,h.name,tb.tag_name, case
+    when tb.taggable_id is null then 0
+    else 1
+    end as score
+    FROM "ingestiondb"."hotels" h left outer join "ingestiondb"."taggings_base" tb
+    on h.id=tb.taggable_id and tb.tag_name='strategic_acquired' and tb.taggable_type='Hotel'
+    order by id
+    """
+    cursor = conn.cursor()
+    cursor.execute(query)
+    data = cursor.fetchall()
+    return data
+
+
+def create_json_competition(data):
+    json_schema = {
+        '_id': data[0],
+        'hotel id': data[0],
+        'score_by_competition': data[3]
+    }
+    return json_schema
+
+
+def kafka_event_competition(**kwargs):
+    ti = kwargs['ti']
+    data_city = ti.xcom_pull(task_ids='get_hive_data_competition')
+    for d in data_city:
+        x = create_json_competition(d)
+        producer.send('tagging_score', x).close(10000)
+        print(x)
+
+
+hive_task_competition = PythonOperator(
+    task_id='get_hive_data_competition',
+    python_callable=get_hive_data_competition,
+    provide_context=True,
+    dag=dag
+)
+
+kafka_task_competition = PythonOperator(
+    task_id='kafka_event_competition',
+    python_callable=kafka_event_competition,
+    provide_context=True,
+    dag=dag
+)
+
+op = DummyOperator(task_id='dummy', dag=dag)
+
+hive_task_city >> kafka_task_city >> op
+hive_task_competition >> kafka_task_competition >> op
