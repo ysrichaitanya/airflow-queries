@@ -21,4 +21,4 @@ select id, question, answer, score,
     where answer is not null
     ) as temp1
       where temp1.question = 'Sealed Water bottles (1 Ltr per guest)' or temp1.question = 'Sealed Water bottles' ) xx
-      on xx.hotel_id = cast(hh.id as VARCHAR(1000))
+      on xx.hotel_id = cast(hh.id as VARCHAR(1000)) order by id asc
