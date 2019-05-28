@@ -1,4 +1,7 @@
-select ll.id, COALESCE(ll.room_cid,0)  + COALESCE(ll.shifting_cid,0) as res,
+select hh.id, CASE WHEN xx.result is null then 0 else xx.result end as cid
+from ingestiondb.hotels hh 
+left join
+(select ll.id, COALESCE(ll.room_cid,0)  + COALESCE(ll.shifting_cid,0) as res,
 case when COALESCE(ll.room_cid,0)  + COALESCE(ll.shifting_cid,0) >= 4 then 1
 else 0 end as result
 from (
@@ -30,4 +33,5 @@ and b.id not in (select booking_id from cstshifting_service.shifting as s inner 
 where date(b.checkin) between date(current_date-interval '15' day) and date(current_date-interval '1' day) )
 and h.country_id = 1
 group by 1
-) tt on tt.hotel_id=xx.id  ) ll order by ll.id asc
+) tt on tt.hotel_id=xx.id  ) ll) xx
+  on xx.id = hh.id order by hh.id asc
