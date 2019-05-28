@@ -4,7 +4,7 @@ select id, question, answer, score,
     else xx.score end as score1
     from ingestiondb.hotels hh
     left join
-    (select temp1.*,case temp1.answer when'Yes' then 2
+    (select temp1.*,case temp1.answer when'Yes' then 1
     else 0 end as score from
     (
     select entityid as hotel_id,case when questionid like '%Room%' then element_at(split (questionid,'_'),-3) else element_at(split (questionid,'_'),-2) end as room,
@@ -18,4 +18,4 @@ select id, question, answer, score,
     where answer is not null
     ) as temp1
       where temp1.question = 'Iron and Iron Board') xx
-  on xx.hotel_id = cast(hh.id as VARCHAR(10000))
+  on xx.hotel_id = cast(hh.id as VARCHAR(10000)) order by id asc
