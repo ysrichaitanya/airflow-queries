@@ -1,6 +1,6 @@
 select id, hotel_id, question, answer,
     case
-    when xx.score is null then 1
+    when xx.score is null then 0
     else xx.score end as score1
     from ingestiondb.hotels hh left join
     (
@@ -18,4 +18,4 @@ select id, hotel_id, question, answer,
     where answer is not null
     ) as temp1
       where temp1.question = 'Functional Kitchen'
-      ) xx on xx.hotel_id=cast(hh.id as varchar(1000000)) limit 10
+      ) xx on xx.hotel_id=cast(hh.id as varchar(1000000)) order by id asc
