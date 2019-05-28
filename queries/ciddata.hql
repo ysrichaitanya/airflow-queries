@@ -1,5 +1,5 @@
 select ll.id, COALESCE(ll.room_cid,0)  + COALESCE(ll.shifting_cid,0) as res,
-case when COALESCE(ll.room_cid,0)  + COALESCE(ll.shifting_cid,0) > 4 then 1
+case when COALESCE(ll.room_cid,0)  + COALESCE(ll.shifting_cid,0) >= 4 then 1
 else 0 end as result
 from (
 (select
