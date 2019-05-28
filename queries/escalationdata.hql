@@ -1,4 +1,7 @@
-select a1.hotel_id,  coalesce(a1.escalations,0) as ww,coalesce(a2.checkins,10000) as tt,
+select hh.id, CASE WHEN xx.ex is null then 0 else xx.ex end as escalations
+from ingestiondb.hotels hh 
+left join
+(select a1.hotel_id,  coalesce(a1.escalations,0) as ww,coalesce(a2.checkins,10000) as tt,
 case when
 coalesce(a1.escalations,0)*100.000/coalesce(a2.checkins,100) >=0.0000 and  coalesce(a1.escalations,0)*100.000/coalesce(a2.checkins,100) <= 2.5 then 0
 when
@@ -23,5 +26,5 @@ INNER JOIN aggregatedb.hotels_summary h  on b.hotel_id = h.hotel_id
 WHERE b.status in (1,2)
 and h.country_id = 1
 and date(b.checkin) between date(current_date - interval '30' day) and date(current_date - interval '1'day)
-GROUP BY h.oyo_id) a2 on a1.oyo_id=a2.oyo_id
-order by a1.hotel_id
+GROUP BY h.oyo_id) a2 on a1.oyo_id=a2.oyo_id) xx
+on xx.hotel_id = hh.id order by hh.id asc
