@@ -19,4 +19,4 @@ select id, question, answer, score,
     where answer is not null
     ) as temp1
       where temp1.question = 'Dental Kits (Toothbrush and a small Toothpaste - Sealed packet)' ) xx
-      on xx.hotel_id = CAST(hh.id as VARCHAR(1000))
+      on xx.hotel_id = CAST(hh.id as VARCHAR(1000)) order by id asc
