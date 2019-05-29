@@ -26,7 +26,7 @@ dag = DAG('hotel_reconLevel_data', description='hotel_reconLevel_data in hive to
 
 path = os.getcwd()
 
-file = os.path.join(path, 'Airflow/dags/queries/reconLeveldata.hql')
+file = os.path.join(path, 'Airflow/dags/queries/recondata.hql')
 
 ################ reconLevel score ##############
 def get_hive_data_reconLevel(**kwargs):
