@@ -42,7 +42,7 @@ def get_hive_data_corp_gx(**kwargs):
 def create_json_corp_gx(data):
     json_schema = {
         'id': str(data[0]).replace(',',''),
-        'corpGx': data[8]
+        'corpGx': data[1]
     }
     return json_schema
 

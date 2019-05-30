@@ -42,7 +42,7 @@ def get_hive_data_overall_gx(**kwargs):
 def create_json_overall_gx(data):
     json_schema = {
         'id': str(data[0]).replace(',',''),
-        'overallGx': data[8]
+        'overallGx': data[1]
     }
     return json_schema
 
