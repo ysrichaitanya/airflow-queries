@@ -43,7 +43,7 @@ def get_hive_data_cid(**kwargs):
 def create_json_cid(data):
     json_schema = {
         'id': str(data[0]).replace(',',''),
-        'cid': data[2]
+        'cid': data[1]
     }
     return json_schema
 

@@ -26,7 +26,7 @@ dag = DAG('hotel_overall_gx_data', description='hotel_overall_gx_data from hive 
 
 import os
 path = os.getcwd()
-file = os.path.join(path, 'Airflow/dags/queries/corpgx.hql')
+file = os.path.join(path, 'Airflow/dags/queries/overallgx.hql')
 
 
 ################ overall_gx score ##############
