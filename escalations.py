@@ -43,7 +43,7 @@ def get_hive_data_escalation(**kwargs):
 def create_json_escalation(data):
     json_schema = {
         'id': str(data[0]).replace(',',''),
-        'escalations': data[3]
+        'escalations': data[1]
     }
     return json_schema
 
