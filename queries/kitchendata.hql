@@ -1,6 +1,6 @@
 select id, hotel_id, question, answer,
     case
-    when xx.score is null then 0
+    when xx.score is null then 1
     else xx.score end as score1
     from ingestiondb.hotels hh left join
     (
