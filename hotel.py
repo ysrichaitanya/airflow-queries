@@ -41,16 +41,18 @@ def get_hive_data_hotelid(**kwargs):
 def kafka_event_hotelid(**kwargs):
     ti = kwargs['ti']
     data_hotel = ti.xcom_pull(task_ids='get_hive_data_hotelid')
-    data = create_batch(data_hotel, 50)
-    for d in data:
+    # data = create_batch(data_hotel, 50)
+    for d in data_hotel:
         producer.send('acp_corp_airflow_hotel_ids', json.dumps(d))
         print(d)
 
 
 def create_batch(data, size):
     l = []
-    for i in range(0, len(data), size):
-        l.append(str(data[i:min(i+size, len(data))]))
+    # for i in range(0, len(data), size):
+    #     l.append(str(data[i:min(i+size, len(data))]))
+    for d in data:
+        l.append(d)
     return l
 
 
