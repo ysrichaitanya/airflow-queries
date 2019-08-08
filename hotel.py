@@ -30,10 +30,10 @@ file = os.path.join(path, 'Airflow/dags/queries/hotelid.hql')
 
 #################hotel id################
 def get_hive_data_hotelid(**kwargs):
-    with open(file) as f:
-        query = f.read()
+    # with open(file) as f:
+    #     query = f.read()
     cursor = conn.cursor()
-    cursor.execute(query)
+    cursor.execute("select id from ingestiondb.hotels order by id")
     data = cursor.fetchall()
     return data
 
