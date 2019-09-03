@@ -1,5 +1,6 @@
 select hh.id, CASE WHEN xx.result is null then 0 else xx.result end as cid
 from ingestiondb.hotels hh 
+left join aggregatedb.hotels_summary h on h.hotel_id=hh.id
 left join
 (select ll.id, COALESCE(ll.room_cid,0)  + COALESCE(ll.shifting_cid,0) as res,
 case when COALESCE(ll.room_cid,0)  + COALESCE(ll.shifting_cid,0) >= 4 then 1
@@ -34,4 +35,8 @@ where date(b.checkin) between date(current_date-interval '15' day) and date(curr
 and h.country_id = 1
 group by 1
 ) tt on tt.hotel_id=xx.id  ) ll) xx
-  on xx.id = hh.id order by hh.id asc
+  on xx.id = hh.id 
+  where  h.oyo_product in ('Collection O','SMART','CapitalO','OYO X','Townhouse','Flagship','Silverkey') 
+and h.country_name in ('India') 
+and h.status_id in (1,2)
+  order by hh.id asc
