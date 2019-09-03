@@ -2,6 +2,7 @@ select id,
     case when coalesce(avg(score),0) > 0 then 1
     else 0 end as res
     from ingestiondb.hotels hh
+    left join aggregatedb.hotels_summary h on h.hotel_id=hh.id
     left join
     (select temp1.*,case temp1.answer when'Yes' then 1
     when 'Available free of Charge' then 1
@@ -19,5 +20,8 @@ select id,
     ) as temp1
       where temp1.question in ('Electric Kettle in each room', 'Tea/ Coffee Kit in each room')) xx
       on xx.hotel_id = cast(hh.id as VARCHAR(1000))
+      where  h.oyo_product in ('Collection O','SMART','CapitalO','OYO X','Townhouse','Flagship','Silverkey') 
+and h.country_name in ('India') 
+and h.status_id in (1,2)
       group by id
   order by id asc
