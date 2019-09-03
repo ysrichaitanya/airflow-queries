@@ -1,8 +1,9 @@
-select id, question, answer, score,
+select hh.id, question, answer, score,
     case
     when xx.score is null then 1
     else xx.score end as score1
     from ingestiondb.hotels hh
+    left join aggregatedb.hotels_summary h on h.hotel_id=hh.id
     left join
     (select temp1.*,case temp1.answer when'Available free of Charge' then 1
     when 'Available on chargable basis' then 0
@@ -21,4 +22,8 @@ select id, question, answer, score,
     where answer is not null
     ) as temp1
       where temp1.question = 'Sealed Water bottles (1 Ltr per guest)' or temp1.question = 'Sealed Water bottles' ) xx
-      on xx.hotel_id = cast(hh.id as VARCHAR(1000)) order by id asc
+      on xx.hotel_id = cast(hh.id as VARCHAR(1000)) 
+      where  h.oyo_product in ('Collection O','SMART','CapitalO','OYO X','Townhouse','Flagship','Silverkey') 
+and h.country_name in ('India') 
+and h.status_id in (1,2)
+      order by hh.id asc
