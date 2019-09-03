@@ -1,5 +1,6 @@
 select hh.id, CASE WHEN xx.ex is null then 0 else xx.ex end as escalations
-from ingestiondb.hotels hh 
+from ingestiondb.hotels hh
+left join aggregatedb.hotels_summary h on h.hotel_id=hh.id
 left join
 (select a1.hotel_id,  coalesce(a1.escalations,0) as ww,coalesce(a2.checkins,10000) as tt,
 case when
@@ -37,4 +38,8 @@ WHERE b.status in (1,2)
 and h.country_id = 1
 and date(b.checkin) between date(current_date - interval '30' day) and date(current_date - interval '1'day)
 GROUP BY h.oyo_id) a2 on a1.oyo_id=a2.oyo_id) xx
-on xx.hotel_id = hh.id order by hh.id asc
+on xx.hotel_id = hh.id 
+where  h.oyo_product in ('Collection O','SMART','CapitalO','OYO X','Townhouse','Flagship','Silverkey') 
+and h.country_name in ('India') 
+and h.status_id in (1,2)
+order by hh.id asc
