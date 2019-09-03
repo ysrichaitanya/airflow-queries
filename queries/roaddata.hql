@@ -1,8 +1,9 @@
-select id, name, hotel_id, question, answer, score ,
+select hh.id, name, xx.hotel_id, question, answer, score ,
     case
     when xx.score is null then 1
     else xx.score end as score1
     from ingestiondb.hotels hh
+    left join aggregatedb.hotels_summary h on h.hotel_id=hh.id
     left join
     (select temp1.*,case temp1.answer when'less than 20 ft' then 0
     when '20-40 ft' then 0.5
@@ -19,4 +20,8 @@ select id, name, hotel_id, question, answer, score ,
     where answer is not null
     ) as temp1
       where temp1.question = 'Road width (in front of property)' ) xx
-      on xx.hotel_id = cast(hh.id as varchar(10000)) order by id asc
+      on xx.hotel_id = cast(hh.id as varchar(10000)) 
+      where  h.oyo_product in ('Collection O','SMART','CapitalO','OYO X','Townhouse','Flagship','Silverkey') 
+and h.country_name in ('India') 
+and h.status_id in (1,2)
+      order by hh.id asc
