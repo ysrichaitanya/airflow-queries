@@ -1,5 +1,6 @@
 select id, xx.level, case WHEN xx.score1 is null then 0 else xx.score1 end as recon
 from ingestiondb.hotels hh 
+left join aggregatedb.hotels_summary h on h.hotel_id=hh.id
 left join
 (SELECT
   hotel_id, level,
@@ -25,4 +26,8 @@ when least(-1 * curr_recovery / 50000, 1) is null then 10
     THEN least(-4 * curr_recovery / curr_gmv, 1)
     ELSE 1 END) * least(-1 * curr_recovery / 50000, 1) * least(curr_age / 3, 1)) * 10 end AS score
 from coinguard_service.hotel_financials WHERE month=extract(month from current_date) and year=extract(year from current_date)))) xx
-  on xx.hotel_id = hh.id order by hh.id asc
+  on xx.hotel_id = hh.id 
+  where  h.oyo_product in ('Collection O','SMART','CapitalO','OYO X','Townhouse','Flagship','Silverkey') 
+and h.country_name in ('India') 
+and h.status_id in (1,2)
+  order by hh.id asc
