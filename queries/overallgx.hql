@@ -1,5 +1,6 @@
 select hh.id, CASE WHEN xx.result is null then 0 else xx.result end as overallgx
 from ingestiondb.hotels hh 
+left join aggregatedb.hotels_summary h on h.hotel_id=hh.id
 left join
 (select temp.*,case when temp.res < -30 then -30  when temp.res>20 then 20 else temp.res end as result from (
 select t.*,((t.unhappy/(t.total_feedbacks*1.0000))*100) as UH_perc,
@@ -7450,4 +7451,8 @@ group by h.hotel_id having sum(case when f.selected_label in ('1','2','3','4','5
 order by h.hotel_id
 ) as t
 ) as temp) xx
-  on xx.hotel_id = hh.id order by hh.id asc
+  on xx.hotel_id = hh.id 
+  where  h.oyo_product in ('Collection O','SMART','CapitalO','OYO X','Townhouse','Flagship','Silverkey') 
+and h.country_name in ('India') 
+and h.status_id in (1,2)
+  order by hh.id asc
