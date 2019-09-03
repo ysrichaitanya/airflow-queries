@@ -6,4 +6,8 @@ end
 as score
 FROM "ingestiondb"."hotels" h left join "ingestiondb"."cities" c
 on h.city_id=c.id
+left join aggregatedb.hotels_summary d on d.hotel_id=h.id
+where  d.oyo_product in ('Collection O','SMART','CapitalO','OYO X','Townhouse','Flagship','Silverkey') 
+and d.country_name in ('India') 
+and d.status_id in (1,2)
 order by h.id asc
